@@ -21,7 +21,7 @@ Graph::Graph(string filename, bool weighted){
 	if (!weighted)
 		this->adj_matrix.resize(n_vertices+1, vector<int>(n_vertices+1, 0));
 	else
-		this->adj_matrix.resize(n_vertices+1, vector<int>(n_vertices+1, 1 << 20));
+		this->adj_matrix.resize(n_vertices+1, vector<int>(n_vertices+1, inf));
 
 	int v, u, w;
 	for (int i=0; i<n_edges; ++i){
@@ -106,7 +106,7 @@ void Graph::print_edges(){
 int Graph::get_next_unvisited(int from, bool transposed){
 	for(int i = 1; i < this->adj_matrix[from].size(); ++i)
 		if (!transposed){
-			if(adj_matrix[from][i]==1 && !vertices[i].is_visited()){ // not exactly equal to 1
+			if(adj_matrix[from][i]==1 && !vertices[i].is_visited()){ 
 				// vertices[i].mark_visited(); // FIX IT
 				return i;
 			}
@@ -288,9 +288,10 @@ bool Graph::bellman_ford(int source){
 	}
 	cout << d[2] << "\n";
 	for (int i=source; i<N; ++i)
-		if (i != pred[i] && pred[i]!=-1 && d[i] > adj_matrix[pred[i]][i] + d[pred[i]]){
+		if (d[i] > adj_matrix[pred[i]][i] + d[pred[i]] 
+							&& i != pred[i] 
+							&& pred[i]!=-1 )
 			return false;
-		}
 	return true;
 }
 
